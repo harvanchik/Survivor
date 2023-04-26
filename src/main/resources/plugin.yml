@@ -1,0 +1,7 @@
+name: Survivor
+version: '${version}'
+main: me.harvanchik.survivor.Survivor
+api-version: 1.19
+authors: [ Flashee ]
+description: Tools to run a game of Survivor in Minecraft.
+website: https://comingsoon.com
