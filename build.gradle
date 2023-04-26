@@ -31,6 +31,10 @@ java {
     }
 }
 
+jar {
+    destinationDirectory.set(file("C:/Users/Jake/Minecraft/Servers/Survivor/plugins"))
+}
+
 tasks.withType(JavaCompile).configureEach {
     if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
         options.release = targetJavaVersion
