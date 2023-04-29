@@ -9,11 +9,13 @@ version = '0.1.0-SNAPSHOT'
 repositories {
     mavenCentral()
     // papermc
-    maven { url = "https://repo.papermc.io/repository/maven-public/" }
+    maven { url = 'https://repo.papermc.io/repository/maven-public/' }
     // sonatype
-    maven { url = "https://oss.sonatype.org/content/groups/public/" }
+    maven { url = 'https://oss.sonatype.org/content/groups/public/' }
     // annoated command framework
-    maven { url = "https://repo.aikar.co/content/groups/aikar/" }
+    maven { url = 'https://repo.aikar.co/content/groups/aikar/' }
+    // tab api
+    maven { url 'https://repo.kryptonmc.org/releases' }
 }
 
 dependencies {
@@ -24,6 +26,8 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.26'
     // annoated command framework
     implementation 'co.aikar:acf-paper:0.5.1-SNAPSHOT'
+    // tab api
+    compileOnly 'me.neznamy:tab-api:3.2.4'
 }
 
 shadowJar {
