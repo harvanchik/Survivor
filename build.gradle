@@ -1,15 +1,18 @@
 plugins {
-//    id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
     id 'java'
 }
 
 group = 'me.harvanchik'
-version = '1.0-SNAPSHOT'
+version = '0.1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    // papermc
     maven { url = "https://repo.papermc.io/repository/maven-public/" }
+    // sonatype
     maven { url = "https://oss.sonatype.org/content/groups/public/" }
+    // annoated command framework
     maven { url = "https://repo.aikar.co/content/groups/aikar/" }
 }
 
@@ -23,8 +26,19 @@ dependencies {
     implementation 'co.aikar:acf-paper:0.5.1-SNAPSHOT'
 }
 
+shadowJar {
+    relocate 'co.aikar.commands', "${group}.survivor.acf"
+    relocate 'co.aikar.locales', "${group}.survivor.locales"
+}
+
 jar {
     destinationDirectory.set(file("C:/Users/Jake/Minecraft/Servers/Survivor/plugins"))
+}
+
+shadowJar {
+    destinationDirectory.set(file("C:/Users/Jake/Minecraft/Servers/Survivor/plugins"))
+    // set name of jar file including version
+    archiveFileName.set("Survivor-${version}.jar")
 }
 
 def targetJavaVersion = 17
@@ -51,3 +65,5 @@ processResources {
         expand props
     }
 }
+
+build.dependsOn shadowJar
