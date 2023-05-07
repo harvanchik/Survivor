@@ -31,7 +31,7 @@ public class TribeManager {
         // add the tribe to the set
         tribes.add(tribe);
         // create team
-        Team team = scoreboard.registerNewTeam(tribe.getName());
+        Team team = scoreboard.registerNewTeam(tribe.getId().toString());
         // set tribe's team
         tribe.setTeam(team);
         // set team prefix
