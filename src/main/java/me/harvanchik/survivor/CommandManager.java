@@ -2,6 +2,7 @@ package me.harvanchik.survivor;
 
 import co.aikar.commands.CommandContexts;
 import co.aikar.commands.PaperCommandManager;
+import lombok.Getter;
 import me.harvanchik.survivor.command.TribeCommand;
 import me.harvanchik.survivor.tribe.Tribe;
 import me.harvanchik.survivor.tribe.TribeManager;
@@ -14,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class CommandManager {
 
-    private static PaperCommandManager cm; // the paper command manager
+    @Getter private static PaperCommandManager cm; // the paper command manager
 
     /**
      * Initialize the command manager. Register the command contexts, commands, and completions.
@@ -25,6 +26,8 @@ public class CommandManager {
         cm = new PaperCommandManager(instance);
         // register command contexts
         registerContexts();
+        // register command completions
+        registerCompletions();
         // register commands
         registerCommands();
     }
@@ -47,4 +50,9 @@ public class CommandManager {
         // register Tribe context (String -> Tribe)
         contexts.registerContext(Tribe.class, c -> TribeManager.getTribe(c.popFirstArg()));
     }
+
+    /**
+     * Register all command completions.
+     */
+    public static void registerCompletions() { }
 }
