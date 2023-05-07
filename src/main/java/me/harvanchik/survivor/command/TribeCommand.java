@@ -36,7 +36,7 @@ public class TribeCommand extends BaseCommand {
         Timestamp now = Util.now();
         // build the tribe
         Tribe tribe = Tribe.builder()
-            .creator(creator)
+            .id(Util.uuid())
             .name(name)
             .color(color != null ? color : "#ffffff")
             .spawn(spawn)

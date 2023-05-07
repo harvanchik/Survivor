@@ -24,11 +24,12 @@ import java.util.UUID;
 @Data @EqualsAndHashCode(onlyExplicitlyIncluded = true) @Builder
 public class Tribe {
 
+    @Include private UUID id; // tribe id (also used as team name)
     private String name; // tribe name
     private String color; // tribe color
     private Location spawn; // tribe's camp spawn
     @Default private Set<UUID> members = new HashSet<>(); // members of the tribe
-    @Include private Team team; // scoreboard team
+    private Team team; // scoreboard team
 
     private UUID creator; // admin who created the tribe
     private Timestamp createdAt; // date when the tribe was created
