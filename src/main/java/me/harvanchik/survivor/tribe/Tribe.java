@@ -5,11 +5,13 @@ import lombok.Builder.Default;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.EqualsAndHashCode.Include;
+import me.harvanchik.survivor.util.Util;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.scoreboard.Team;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.Timestamp;
 import java.util.HashSet;
@@ -21,7 +23,7 @@ import java.util.UUID;
  * @author harvanchik
  * @since 04-26-2023
  */
-@Data @EqualsAndHashCode(onlyExplicitlyIncluded = true) @Builder
+@Data @Builder @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Tribe {
 
     @Include private UUID id; // tribe id (also used as team name)
@@ -33,6 +35,7 @@ public class Tribe {
 
     private UUID creator; // admin who created the tribe
     private Timestamp createdAt; // date when the tribe was created
+    private UUID modifier; // admin who last modified the tribe
     private Timestamp modifiedAt; // date when the tribe was last modified
 
     /**
@@ -60,8 +63,12 @@ public class Tribe {
     /**
      * Update the tribe team. This updates the team prefix.
      */
-    public void updateTeam() {
+    public void update(@Nullable final UUID modifier) {
         // set team prefix
         team.prefix(Component.text("[" + name + "] ", TextColor.fromHexString(color)));
+        // set tribe modifier (null = console)
+        this.modifier = modifier;
+        // set tribe last modified date
+        modifiedAt = Util.now();
     }
 }
