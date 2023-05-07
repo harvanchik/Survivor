@@ -2,6 +2,7 @@ package me.harvanchik.survivor.command;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
+import me.harvanchik.survivor.CommandManager;
 import me.harvanchik.survivor.tribe.Tribe;
 import me.harvanchik.survivor.tribe.TribeManager;
 import me.harvanchik.survivor.util.Util;
@@ -19,6 +20,11 @@ import java.util.UUID;
  */
 @CommandAlias("tribe")
 public class TribeCommand extends BaseCommand {
+
+    public TribeCommand() {
+        // register tribe command completions
+        CommandManager.getCm().getCommandCompletions().registerAsyncCompletion("tribes", c -> TribeManager.getTribes().stream().map(Tribe::getName).toList());
+    }
 
     @Subcommand("create")
     @Description("Create a new tribe.")
@@ -40,6 +46,7 @@ public class TribeCommand extends BaseCommand {
             .name(name)
             .color(color != null ? color : "#ffffff")
             .spawn(spawn)
+            .creator(creator)
             .createdAt(now)
             .modifiedAt(now)
             .build();
@@ -54,6 +61,7 @@ public class TribeCommand extends BaseCommand {
 
     @Subcommand("disband")
     @Description("Remove a tribe.")
+    @CommandCompletion("@tribes")
     public void disband(CommandSender sender, Tribe tribe) {
         // remove the tribe from the tribe manager
         TribeManager.removeTribe(tribe);
@@ -62,7 +70,8 @@ public class TribeCommand extends BaseCommand {
 
     @Subcommand("join")
     @Description("Add a member to a tribe.")
-    public void add(CommandSender sender, Tribe tribe, @Optional @Single Player target) {
+    @CommandCompletion("@tribes")
+    public void join(CommandSender sender, Tribe tribe, @Optional @Single Player target) {
         // if command is targeting sender (as player)
         if (sender instanceof Player player && target == null) target = player;
         // if sender is console and no target is specified, stop here
@@ -74,19 +83,36 @@ public class TribeCommand extends BaseCommand {
 
     @Subcommand("leave")
     @Description("Remove a member from a tribe.")
-    public void leave(CommandSender sender, Tribe tribe, @Optional @Single Player target) {
+    @CommandCompletion("@tribes")
+    public void leave(CommandSender sender, @Optional Tribe tribe, @Optional @Single Player target) {
         // if command is targeting sender (as player)
         if (sender instanceof Player player && target == null) target = player;
         // if sender is console and no target is specified, stop here
         if (target == null) return;
-        // add player to tribe
+        // if tribe is not specified
+        if (tribe == null) {
+            // get the tribe the player is in
+            tribe = TribeManager.getTribe(target.getUniqueId());
+            // if player is not in a tribe
+            if (tribe == null) {
+                // send error message
+                sender.sendMessage("You are not in a tribe."); return;
+            }
+        }
+        // remove player from tribe
         tribe.removeMember(target.getUniqueId());
         sender.sendMessage("removed from tribe " + tribe.getName());
     }
 
     @Subcommand("modify name")
     @Description("Modify a tribe's name.")
-    public void modifyName(CommandSender sender, Tribe tribe, String name) {
+    @CommandCompletion("@tribes @nothing")
+    public void modifyName(CommandSender sender, Tribe tribe, @Single String name) {
+        // check if tribe name has not changed
+        if (tribe.getName().equals(name)) {
+            sender.sendMessage("Tribe name is already " + name);
+            return;
+        }
         // check if tribe name is taken
         if (TribeManager.getTribe(name) != null) {
             sender.sendMessage("A tribe with that name already exists.");
@@ -95,17 +121,23 @@ public class TribeCommand extends BaseCommand {
         // set the tribe name
         tribe.setName(name);
         // update tribe team
-        tribe.updateTeam();
+        tribe.update(sender instanceof Player player ? player.getUniqueId() : null);
         sender.sendMessage("set tribe name to " + name);
     }
 
     @Subcommand("modify color")
     @Description("Modify a tribe's color.")
-    public void modifyColor(CommandSender sender, Tribe tribe, String color) {
+    @CommandCompletion("@tribes @nothing")
+    public void modifyColor(CommandSender sender, Tribe tribe, @Single String color) {
+        // check if tribe color has not changed
+        if (tribe.getColor().equalsIgnoreCase(color)) {
+            sender.sendMessage("Tribe color is already " + color);
+            return;
+        }
         // set the tribe color
         tribe.setColor(color);
         // update tribe team
-        tribe.updateTeam();
+        tribe.update(sender instanceof Player player ? player.getUniqueId() : null);
         sender.sendMessage("set tribe color to " + color);
     }
 }
